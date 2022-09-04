@@ -1,5 +1,7 @@
 import scrapy
 import numpy as np
+from scrapy.crawler import CrawlerProcess
+from datetime import date
 
 def errors(request):
     if len(request) > 0:
@@ -34,4 +36,10 @@ class Gpu123Spider(scrapy.Spider):
                 'frequency': errors(response.xpath('//*[@id="tab-char"]/div[1]/aside/div/div[7]/span').extract()),
                 'RAM' : ram_error(response.css('#tab-char > div.content-wrp.properties-source > aside > div > div:nth-child(9) > span > a').extract())
             }
-        
+process = CrawlerProcess(settings={
+    "FEEDS": {
+        f"gpu_{date.today()}.csv": {"format": "csv"},
+    },
+})
+process.crawl(Gpu123Spider)
+process.start()
