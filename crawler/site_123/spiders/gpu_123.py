@@ -1,4 +1,6 @@
+from sys import prefix
 import scrapy
+import pandas as pd
 import numpy as np
 from scrapy.crawler import CrawlerProcess
 from datetime import date
@@ -43,3 +45,7 @@ process = CrawlerProcess(settings={
 })
 process.crawl(Gpu123Spider)
 process.start()
+
+
+today_dataset = pd.read_csv(f"D:/crawler/gpu_{date.today()}.csv")[["title", "price"]].rename(columns={"price":f"price_{date.today()}"})
+pd.read_csv("D:/crawler/gpu_2022.csv").merge(right=today_dataset, how="outer", on="title").reset_index(drop=True).to_csv("D:/crawler/gpu_2022.csv", index=False)
